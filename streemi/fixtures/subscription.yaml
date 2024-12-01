@@ -1,0 +1,42 @@
+App\Entity\Subscription:
+  subscription_monthly:
+    name: 'Abonnement mensuel'
+    price: 999
+    duration: 1
+    label: 'Idéal pour débuter'
+    description: 'Un abonnement mensuel flexible pour découvrir nos services.'
+
+  subscription_annual:
+    name: 'Abonnement annuel'
+    price: 9999
+    duration: 12
+    label: 'Le plus populaire'
+    description: 'Un abonnement annuel économique pour profiter pleinement de nos services.'
+
+  subscription_lifetime:
+    name: 'Abonnement à vie'
+    price: 99999
+    duration: 9999
+    label: 'Investissement unique'
+    description: 'Un abonnement à vie pour un accès illimité et sans contrainte.'
+
+  subscription_3_months:
+    name: 'Abonnement 3 mois'
+    price: 2999
+    duration: 3
+    label: 'Le plus flexible'
+    description: 'Un abonnement pour une durée moyenne et une meilleure planification.'
+
+  subscription_6_months:
+    name: 'Abonnement 6 mois'
+    price: 5999
+    duration: 6
+    label: 'Bon rapport qualité/prix'
+    description: 'Un abonnement pour ceux qui cherchent un bon équilibre entre flexibilité et économie.'
+
+App\Entity\SubscriptionHistory:
+  sub_history:
+    startAt: '<dateTimeBetween("-1 year", "now")>'
+    endAt: '<dateTimeBetween("now", "+1 year")>'
+    subscriber: '@user_*'
+    subscription: '@subscription_*'
