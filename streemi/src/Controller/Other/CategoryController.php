@@ -15,6 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CategoryController extends AbstractController
 {
+    const POPULAR_MEDIA_LIMIT = 3;
+
     #[Route(path: '/category/{id}', name: 'page_category')]
     public function category(string $id, CategoryRepository $categoryRepository, MediaRepository $mediaRepository): Response
     {
@@ -26,19 +28,25 @@ class CategoryController extends AbstractController
         }
 
         // Récupérer les médias associés à la catégorie
-        $mediaList = $mediaRepository->findByCategory($category);
+        $medias = $mediaRepository->findByCategory($category);
+
+        //find all categories
+
+        $categories = $categoryRepository->findAll();
 
         // Passer la catégorie et la liste des médias à la vue
         return $this->render('other/category.html.twig', [
             'category' => $category,
-            'mediaList' => $mediaList,
+            'medias' => $medias,
+            'categories' => $categories
         ]);
     }
     #[Route(path: '/discover', name: 'page_discover')]
-   public function discover(EntityManagerInterface $entityManager, CategoryRepository $categoryRepository):Response
+   public function discover(CategoryRepository $categoryRepository,MediaRepository $mediaRepository):Response
 {
+    $medias = $mediaRepository->findPopular(self::POPULAR_MEDIA_LIMIT);
        // recuperer toutes les catégories : un tableau d'objets
         $categories = $categoryRepository->findAll();
-       return $this->render('other/discover.html.twig', ['categories' => $categories]);
+       return $this->render('other/discover.html.twig', ['categories' => $categories, 'medias' => $medias]);
    }
 }

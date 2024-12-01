@@ -1,0 +1,38 @@
+
+        <li class="mt-9 {% if comment.parentComment is not null %} pl-9 border-l-4 {% endif %} {% if comment.status == 'PENDING' %} opacity-40 cursor-not-allowed {% endif %}">
+            {% if comment.status == 'PENDING' %}
+                <span class="absolute top-2 right-2 px-3 py-1 bg-orange-100 rounded-md">En attente de vérification</span>
+            {% endif %}
+            <div class="bg-gray-100 p-4 rounded-lg">
+                <div class="flex items-center">
+                    <img src="https://random.imagecdn.app/100/100?a={{ loop.index }}" class="w-10 h-10 rounded-full" alt="User Avatar">
+                    <div class="ml-4 w-full">
+                        <span class="font-medium">Nom</span>
+                        <span class="text-xs text-gray-500 flex items-center justify-between w-full">
+                            <span>Date Creation</span>
+                            <span></span>
+                        </span>
+                    </div>
+                </div>
+                <p class="mt-4 w-full">{{ comment.content }}</p>
+            </div>
+            {% if comment.parentComment is not null %}
+                <ul class="space-y-2 mt-4">
+                    <li class="pl-6 border-l-2">
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <div class="flex items-center">
+                                <img src="https://random.imagecdn.app/100/100?a={{ loop.index + 1 }}" class="w-10 h-10 rounded-full" alt="User Avatar">
+                                <div class="ml-4 w-full">
+                                    <span class="font-medium">Nom</span>
+                                    <span class="text-xs text-gray-500 flex items-center justify-between w-full">
+                                        <span>Date Creation</span>
+                                        <span></span>
+                                    </span>
+                                </div>
+                            </div>
+                            <p class="mt-4 w-full">{{ comment.parentComment.content }}</p>
+                        </div>
+                    </li>
+                </ul>
+            {% endif %}
+        </li>
