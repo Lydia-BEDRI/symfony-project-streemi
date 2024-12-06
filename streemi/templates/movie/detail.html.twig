@@ -67,7 +67,7 @@
                         </div>
                         <div class="text-right space-x-1">
                             <span class="bg-white/30 py-1 px-3 text-xxs rounded">1h42m restants</span>
-                            <span class="bg-white/30 py-1 px-3 text-xxs rounded">{{  media.watchHistories | length }} visionnage(s)</span>
+                            <span class="bg-white/30 py-1 px-3 text-xxs rounded">{{ media.watchHistories | length }} visionnage(s)</span>
                             <span class="bg-white/30 py-1 px-3 text-xxs rounded">{{ media.comments | length }} commentaire(s)</span>
                         </div>
                     </div>
@@ -95,8 +95,19 @@
                 <h2 class="text-lg font-medium text-black"><span class="font-bold text-red-600">Infos</span> du film
                 </h2>
                 <div class="flex items-center flex-wrap mt-9">
-                    <span class="flex bg-black/10 m-0.5 px-1 py-0.5 rounded"><b class="mr-2">Durée</b> 2h40 mins</span>
-                    <span class="flex bg-black/10 m-0.5 px-1 py-0.5 rounded"><b class="mr-2">Date de sortie</b> {{ media.releaseDate|date("d F Y") }}</span>
+
+                    <span class="flex bg-black/10 m-0.5 px-1 py-0.5 rounded">
+                        <b class="mr-2">Durée</b>
+                            {% set hours = media.duration // 60 %}
+                                {% set minutes = media.duration % 60 %}
+                        {% if minutes == 0 %}
+                            {{ hours }}h
+                        {% else %}
+                            {{ hours }}h{{ minutes }}
+                        {% endif %}
+                    </span>
+                    <span class="flex bg-black/10 m-0.5 px-1 py-0.5 rounded"><b
+                                class="mr-2">Date de sortie</b> {{ media.releaseDate|date("d F Y") }}</span>
                     <span class="flex bg-black/10 m-0.5 px-1 py-0.5 rounded"><b class="mr-2">Notes</b> <span
                                 class="flex space-x-2 items-center text-xs"><span>7.4</span><svg class="w-8 h-5"
                                                                                                  xmlns="http://www.w3.org/2000/svg"
@@ -112,8 +123,8 @@
                     <span class="flex bg-black/10 m-0.5 px-1 py-0.5 rounded">
                          <b class="mr-2">Langues</b>
                           {% for language in media.languages %}
-                             {{ language.nom }}{% if not loop.last %}, {% endif %}
-                             {% endfor %}
+                              {{ language.nom }}{% if not loop.last %}, {% endif %}
+                          {% endfor %}
                     </span>
                     <span class="flex bg-black/10 m-0.5 px-1 py-0.5 rounded">
     <b class="mr-2">Catégories</b>
@@ -123,11 +134,12 @@
         </a>
     {% endfor %}
 </span>
-                    <span class="flex bg-black/10 m-0.5 px-1 py-0.5 rounded"><b class="mr-2">Bande annonce</b> <a
-                                href="#"
-                                class="hover:text-red-600 underline decoration-red-400 decoration-2">Youtube</a>,&nbsp;<a
-                                href="#"
-                                class="hover:text-red-600 underline decoration-red-400 decoration-2">Allociné</a></span>
+                    <span class="flex bg-black/10 m-0.5 px-1 py-0.5 rounded"><b class="mr-2">Bande annonce</b>
+                         {% for trailer in media.trailers %}
+                             <a href="#"
+                                class="hover:text-red-600 underline decoration-red-400 decoration-2">{{ trailer }}</a>{% if not loop.last %}, {% endif %}
+                         {% endfor %}
+                    </span>
                 </div>
             </div>
             <div class="max-w-3xl mx-auto mt-9">
@@ -140,7 +152,7 @@
                 </h2>
                 <ul class="mt-9 grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-5">
                     {% for member in media.staff %}
-                    {{ include('other/casting_card.html.twig') }}
+                        {{ include('other/casting_card.html.twig') }}
                     {% endfor %}
 
                 </ul>
@@ -148,8 +160,8 @@
             <div class="max-w-3xl mx-auto mt-9">
                 <h2 class="text-lg font-medium text-black">Le <span class="font-bold text-red-600">Casting</span></h2>
                 <ul class="mt-9 grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-5">
-                   {% for member in media.casting %}
-                    {{ include('other/casting_card.html.twig') }}
+                    {% for member in media.casting %}
+                        {{ include('other/casting_card.html.twig') }}
                     {% endfor %}
                 </ul>
             </div>

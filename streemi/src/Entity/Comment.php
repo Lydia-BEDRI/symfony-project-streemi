@@ -8,10 +8,30 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use DateTimeImmutable; // Assurez-vous d'importer cette classe
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
 {
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, options: ['default' => 'CURRENT_TIMESTAMP'])]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    public function __construct()
+    {
+        $this->childComments = new ArrayCollection();
+        $this->createdAt = new DateTimeImmutable(); // Définit automatiquement la date de création
+    }
+
+    public function getCreatedAt(): ?DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -41,10 +61,6 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private ?Media $media = null;
 
-    public function __construct()
-    {
-        $this->childComments = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
