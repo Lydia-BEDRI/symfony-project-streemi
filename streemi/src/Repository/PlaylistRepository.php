@@ -40,4 +40,22 @@ class PlaylistRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    /**
+     * Retourne les playlists avec le nombre de films et de séries associés.
+     */
+//    public function findPlaylistsWithMediaCounts(): array
+//    {
+//        return $this->createQueryBuilder('p')
+//            ->select('p as playlist,
+//                  SUM(CASE WHEN m.discr = :movie THEN 1 ELSE 0 END) AS moviesCount,
+//                  SUM(CASE WHEN m.discr = :serie THEN 1 ELSE 0 END) AS seriesCount')
+//            ->leftJoin('p.playlistMedia', 'pm')
+//            ->leftJoin('pm.media', 'm')
+//            ->setParameter('movie', 'movie')
+//            ->setParameter('serie', 'serie')
+//            ->groupBy('p.id')
+//            ->getQuery()
+//            ->getResult();
+//    }
+
 }
