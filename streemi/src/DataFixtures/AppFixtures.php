@@ -150,17 +150,27 @@ class AppFixtures extends Fixture
 
     protected function createUsers(ObjectManager $manager, array &$users, UserPasswordHasherInterface $userPasswordHasher): void
     {
+        $roles = ['ROLE_USER', 'ROLE_BANNED'];
+
         for ($i = 0; $i < self::MAX_USERS; $i++) {
             $user = new User();
             $user->setEmail("test_$i@example.com");
             $user->setUsername("test_$i");
             $user->setPassword($userPasswordHasher->hashPassword($user, 'password'));
-            $user->setRoles(['ROLE_USER']);
+
+            if ($i === 0) {
+                $user->setRoles(['ROLE_ADMIN']);
+            } else {
+                $user->setRoles([ $roles[array_rand($roles)] ]);
+            }
+
             $user->setAccountStatus(UserAccountStatusEnum::ACTIVE);
             $users[] = $user;
             $manager->persist($user);
         }
     }
+
+
 
     public function createPlaylists(ObjectManager $manager, array $users, array &$playlists): void
     {
