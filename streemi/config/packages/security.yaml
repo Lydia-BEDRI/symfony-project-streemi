@@ -17,13 +17,14 @@ security:
             provider: app_user_provider
             pattern: ^(?!/admin).* # Exclure /admin des règles de sécurité
             form_login:
-                login_path: page_login
-                check_path: page_login
+                login_path: app_login
+                check_path: app_login
                 enable_csrf: true
 
             logout:
-                path: page_logout
-                target: page_homepage
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER
