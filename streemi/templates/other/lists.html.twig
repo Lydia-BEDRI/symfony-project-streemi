@@ -53,8 +53,7 @@
                                 <option value="{{ playlist.id }}" {% if selectedPlaylist and selectedPlaylist.id == playlist.id %}selected{% endif %}>
                     #{{ loop.index - 1 }}.
                                     {{ playlist.name }}
-                                </option>
-                            {% endfor %}
+                    {% endfor %}
 
                     </select>
 

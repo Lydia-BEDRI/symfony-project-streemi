@@ -26,6 +26,11 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private UserPasswordHasherInterface $userPasswordHasher;
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
+    {
+        $this->userPasswordHasher = $userPasswordHasher;
+    }
     public const MAX_USERS = 10;
     public const MAX_MEDIA = 100;
     public const MAX_SUBSCRIPTIONS = 3;
@@ -49,8 +54,7 @@ class AppFixtures extends Fixture
         $languages = [];
         $subscriptions = [];
 
-        $this->createUsers(manager: $manager, users: $users);
-        $this->createPlaylists(manager: $manager, users: $users, playlists: $playlists);
+        $this->createUsers(manager: $manager, users: $users, userPasswordHasher: $this->userPasswordHasher);        $this->createPlaylists(manager: $manager, users: $users, playlists: $playlists);
         $this->createSubscriptions(manager: $manager, users: $users, subscriptions: $subscriptions);
         $this->createCategories(manager: $manager, categories: $categories);
         $this->createLanguages(manager: $manager, languages: $languages);
@@ -97,6 +101,19 @@ class AppFixtures extends Fixture
 
     protected function createMedia(ObjectManager $manager, array &$medias): void
     {
+        // Liste des plateformes de trailers
+        $trailerPlatforms = [
+            "Youtube",
+            "Vimeo",
+            "Dailymotion",
+            "Twitch",
+            "AlloCiné",
+            "IMDb",
+            "Rotten Tomatoes",
+            "Metacritic",
+            "SensCritique",
+        ];
+
         for ($j = 0; $j < self::MAX_MEDIA; $j++) {
             $media = random_int(min: 0, max: 1) === 0 ? new Movie() : new Serie();
             $title = $media instanceof Movie ? 'Film' : 'Série';
@@ -106,6 +123,19 @@ class AppFixtures extends Fixture
             $media->setShortDescription(shortDescription: "Short description $j");
             $media->setCoverImage(coverImage: "https://picsum.photos/1920/1080?random=$j");
             $media->setReleaseDate(releaseDate: new DateTime(datetime: "+7 days"));
+
+            if ($media instanceof Movie) {
+                $media->setDuration(duration: random_int(60, 180));
+
+                // Sélectionner 3 plateformes aléatoires et générer des liens de trailers
+                $trailers = [];
+                $selectedPlatforms = array_rand($trailerPlatforms, 3);
+                foreach ($selectedPlatforms as $platformIndex) {
+                    $trailers[] = $trailerPlatforms[$platformIndex];
+                }
+                $media->setTrailers(trailers: $trailers);
+            }
+
             $manager->persist(object: $media);
             $medias[] = $media;
 
@@ -114,12 +144,9 @@ class AppFixtures extends Fixture
             if ($media instanceof Serie) {
                 $this->createSeasons(manager: $manager, media: $media);
             }
-
-//            if ($media instanceof Movie) {
-//                $media->setDuration(duration: random_int(60, 180));
-//            }
         }
     }
+
 
     protected function createUsers(ObjectManager $manager, array &$users, UserPasswordHasherInterface $userPasswordHasher): void
     {
@@ -131,7 +158,6 @@ class AppFixtures extends Fixture
             $user->setRoles(['ROLE_USER']);
             $user->setAccountStatus(UserAccountStatusEnum::ACTIVE);
             $users[] = $user;
-
             $manager->persist($user);
         }
     }
@@ -211,6 +237,7 @@ class AppFixtures extends Fixture
             $episode->setDuration(duration: random_int(min: 10, max: 60));
             $episode->setReleasedAt(releasedAt: new DateTimeImmutable());
             $episode->setSeason(season: $season);
+            $episode->setDescription(description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec pur us sodales');
 
             $manager->persist(object: $episode);
         }
@@ -224,7 +251,7 @@ class AppFixtures extends Fixture
                 $comment = new Comment();
                 $comment->setPublisher($users[array_rand(array: $users)]);
                 $comment->setContent(content: "Commentaire $i");
-//                $comment->setCreatedAt(new \DateTimeImmutable());
+                $comment->setCreatedAt(new \DateTimeImmutable());
                 $comment->setStatus(status: random_int(min: 0, max: 1) === 1 ? CommentStatusEnum::VALIDATED : CommentStatusEnum::VALIDATED);
                 $comment->setMedia($media);
 
@@ -233,7 +260,7 @@ class AppFixtures extends Fixture
                     $parentComment = new Comment();
                     $parentComment->setPublisher($users[array_rand($users)]);
                     $parentComment->setContent("Commentaire parent");
-//                    $parentComment->set(new \DateTimeImmutable());
+                    $parentComment->setCreatedAt(new \DateTimeImmutable());
                     $parentComment->setStatus(random_int(0, 1) === 1 ? CommentStatusEnum::VALIDATED : CommentStatusEnum::PENDING);
                     $parentComment->setMedia($media);
                     $comment->setParentComment($parentComment);
