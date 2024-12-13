@@ -47,13 +47,15 @@
 
                 <div class="relative w-full flex text-gray-700 font-medium">
 
-                    <select class="appearance-none w-full bg-white border border-gray-200 px-7 py-3 rounded-md shadow transition" id="playlistSelector>
+                    <select class="appearance-none w-full bg-white border border-gray-200 px-7 py-3 rounded-md shadow transition" id="playlistSelector">
 
-                            {% for playlist in playlists %}
-                                <option value="{{ playlist.id }}" {% if selectedPlaylist and selectedPlaylist.id == playlist.id %}selected{% endif %}>
-                    #{{ loop.index - 1 }}.
-                                    {{ playlist.name }}
-                    {% endfor %}
+                        {% for subscription in playlists %}
+                            <option value="{{ subscription.getPlaylist.id }}"
+                                    {% if selectedPlaylist and selectedPlaylist.id == subscription.getPlaylist.id %}selected{% endif %}>
+                                #{{ loop.index - 1 }}. {{ subscription.getPlaylist.name }}
+                            </option>
+                        {% endfor %}
+
 
                     </select>
 

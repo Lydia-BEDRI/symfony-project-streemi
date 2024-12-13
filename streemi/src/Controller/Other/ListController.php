@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller\Other;
 
+use App\Entity\User;
 use App\Repository\PlaylistRepository;
 use App\Repository\PlaylistMediaRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,8 +17,24 @@ class ListController extends AbstractController
         PlaylistMediaRepository $playlistMediaRepository,
         Request $request
     ): Response {
-        // Récupérer toutes les playlists
-        $playlists = $playlistRepository->findAll();
+        /** @var User|null $currentUser */
+        $currentUser = $this->getUser();
+
+        if (!$currentUser) {
+            return $this->redirectToRoute('home.index');
+        }
+
+        // Récupérer les playlists de l'utilisateur
+        $playlists = $currentUser->getPlaylistSubscriptions();
+
+        // Vérifier s'il y a des playlists disponibles
+        if (!$playlists || count($playlists) === 0) {
+            return $this->render('other/lists.html.twig', [
+                'playlists' => [],
+                'selectedPlaylist' => null,
+                'medias' => [],
+            ]);
+        }
 
         // Vérifier si un paramètre 'selectedPlaylist' est présent dans l'URL
         $selectedPlaylistId = $request->query->get('selectedPlaylist');
@@ -27,13 +44,18 @@ class ListController extends AbstractController
         if ($selectedPlaylistId) {
             // Trouver la playlist correspondante
             $selectedPlaylist = $playlistRepository->find($selectedPlaylistId);
+        }
 
-            if ($selectedPlaylist) {
-                // Récupérer les médias associés via PlaylistMedia
-                $playlistMedia = $playlistMediaRepository->findBy(['playlist' => $selectedPlaylist]);
-                foreach ($playlistMedia as $entry) {
-                    $medias[] = $entry->getMedia(); // Ajoute le média à la liste
-                }
+        // Si aucune playlist sélectionnée, choisir la première
+        if (!$selectedPlaylist) {
+            $selectedPlaylist = $playlists[0]->getPlaylist();
+        }
+
+        // Récupérer les médias associés à la playlist sélectionnée
+        if ($selectedPlaylist) {
+            $playlistMedia = $playlistMediaRepository->findBy(['playlist' => $selectedPlaylist]);
+            foreach ($playlistMedia as $entry) {
+                $medias[] = $entry->getMedia();
             }
         }
 
