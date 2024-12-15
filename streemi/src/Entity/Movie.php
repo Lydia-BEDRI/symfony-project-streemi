@@ -15,8 +15,9 @@ class Movie extends Media
     private ?int $duration = 120; // Valeur par défaut 2h (120 minutes)
 
 
-    #[ORM\Column(type: 'json', options: ['default' => '[]'])] // JSON avec un tableau vide par défaut
-    private array $trailers = []; // Valeur par défaut, tableau vide
+    #[ORM\Column(type: 'json')]
+    private array $trailers = [];
+
 
     public function getDuration(): ?int
     {
