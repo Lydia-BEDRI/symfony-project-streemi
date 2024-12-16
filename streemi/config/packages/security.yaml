@@ -15,7 +15,7 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            pattern: ^(?!/admin).* # Exclure /admin des règles de sécurité
+            pattern:
             form_login:
                 login_path: app_login
                 check_path: app_login
@@ -31,8 +31,8 @@ security:
         ROLE_USER: ROLE_BANNED
 
     access_control:
-#        - { path: ^/admin, roles: ROLE_ADMIN }
-       - { path: ^/admin, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+      - { path: ^/admin, roles: ROLE_ADMIN }
+#       - { path: ^/admin, roles: IS_AUTHENTICATED_ANONYMOUSLY }
 
 when@test:
     security:
