@@ -26,4 +26,12 @@ class HomeController extends AbstractController
             'medias' => $medias,
         ]);
     }
+    #[Route(path: '/test', name: 'test')]
+    public function test(): Response
+    {
+
+
+        return $this->render('test.html.twig', [
+        ]);
+    }
 }

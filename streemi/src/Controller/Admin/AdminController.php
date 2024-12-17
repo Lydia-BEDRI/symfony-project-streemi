@@ -46,4 +46,13 @@ class AdminController extends AbstractController
         return $this->render('admin/admin_upload.html.twig');
     }
 
+//app_category_index
+    #[Route(path: '/admin/category', name: 'page_admin_category')]
+    #[IsGranted("ROLE_ADMIN")] // Ajouter l'annotation pour restreindre l'accès aux administrateurs
+    public function show(): Response
+    {
+        // redirection vers la page  qui a la route app_category_index
+        return $this->redirectToRoute('app_category_index');
+    }
+
 }
